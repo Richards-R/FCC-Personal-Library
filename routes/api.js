@@ -7,8 +7,21 @@
 */
 
 'use strict';
+const mongodb = require("mongodb");
+const mongoose = require("mongoose");
 
 module.exports = function (app) {
+  mongoose.connect(process.env.DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  let bookSchema = new mongoose.Schema({
+    title: String,
+    commentcount: Number
+  });
+
+  let Book = mongoose.model("Book", bookSchema);
 
   app.route('/api/books')
     .get(function (req, res){
@@ -18,6 +31,13 @@ module.exports = function (app) {
     
     .post(function (req, res){
       let title = req.body.title;
+      if (!title){
+        return res.json({ error: "missing required field title" });
+      }
+      let newBook = new Book({
+        title: title});
+        newBook.save();
+      return res.json(newBook);
       //response will contain new book object including atleast _id and title
     })
     
