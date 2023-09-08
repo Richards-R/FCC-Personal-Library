@@ -10,6 +10,7 @@
 const mongodb = require("mongodb");
 const mongoose = require("mongoose");
 
+
 module.exports = function (app) {
   mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
@@ -24,20 +25,21 @@ module.exports = function (app) {
   let Book = mongoose.model("Book", bookSchema);
 
   app.route('/api/books')
-    .get(function (req, res){
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    })
+    // .get(function (req, res){
+    //   //response will be array of book objects
+    //   //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+    // })
     
     .post(function (req, res){
       let title = req.body.title;
+      console.log('Anew book title', newBook);
       if (!title){
         return res.json({ error: "missing required field title" });
       }
       let newBook = new Book({
         title: title
       });
-      console.log('new book title', newBook);
+      console.log('Bnew book title', newBook);
       newBook.save();
       return res.json(newBook);
       //response will contain new book object including atleast _id and title
