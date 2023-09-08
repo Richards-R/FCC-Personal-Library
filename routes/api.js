@@ -35,8 +35,10 @@ module.exports = function (app) {
         return res.json({ error: "missing required field title" });
       }
       let newBook = new Book({
-        title: title});
-        newBook.save();
+        title: title
+      });
+      console.log('new book title', newBook);
+      newBook.save();
       return res.json(newBook);
       //response will contain new book object including atleast _id and title
     })
