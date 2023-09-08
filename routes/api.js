@@ -7,41 +7,32 @@
 */
 
 'use strict';
-const mongodb = require("mongodb");
-const mongoose = require("mongoose");
-
+const Book = require('../models').Book;
 
 module.exports = function (app) {
-  mongoose.connect(process.env.DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  let bookSchema = new mongoose.Schema({
-    title: String,
-    commentcount: Number
-  });
-
-  let Book = mongoose.model("Book", bookSchema);
 
   app.route('/api/books')
-    // .get(function (req, res){
-    //   //response will be array of book objects
-    //   //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    // })
+    .get(function (req, res){
+      let bookList = req.params;
+      console.log(req.params);
+            
+      //response will be array of book objects
+      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+    })
     
     .post(function (req, res){
       let title = req.body.title;
-      console.log('Anew book title', newBook);
+      //console.log('Anew book title', newBook);
       if (!title){
         return res.json({ error: "missing required field title" });
       }
-      let newBook = new Book({
-        title: title
+      const newBook = new Book({
+        title,
+        comments: []
       });
       console.log('Bnew book title', newBook);
       newBook.save();
-      return res.json(newBook);
+      return res.json({_id: newBook._id, title: newBook.title});
       //response will contain new book object including atleast _id and title
     })
     
