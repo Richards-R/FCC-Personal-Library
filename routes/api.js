@@ -13,14 +13,25 @@ module.exports = function (app) {
 
   app.route('/api/books')
     .get(function (req, res){
-      let bookList = req.params;
-      console.log(req.params);
-            
+      Book.find({})
+      .then(data => {
+        const formatData = data.map((book) => {
+          return{
+            _id : book._id,
+            title: book.title,
+            comments: book.comments,
+            commentcount: book.comments.length
+          }
+        })
+        return res.json(formatData)}
+      )
+      .catch(err=> {
+          return res.json([]),err});
+       })
+  
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    })
-    
-    .post(function (req, res){
+      .post(function (req, res){
       let title = req.body.title;
       //console.log('Anew book title', newBook);
       if (!title){

@@ -2,21 +2,21 @@ $( document ).ready(function() {
   let  items = [];
   let  itemsRaw = [];
   
-  // $.getJSON('/api/books', function(data) {
-  //   let  items = [];
-  //   itemsRaw = data;
-  //   $.each(data, function(i, val) {
-  //     items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentcount + ' comments</li>');
-  //     return ( i !== 14 );
-  //   });
-  //   if (items.length >= 15) {
-  //     items.push('<p>...and '+ (data.length - 15)+' more!</p>');
-  //   }
-  //   $('<ul/>', {
-  //     'class': 'listWrapper',
-  //     html: items.join('')
-  //     }).appendTo('#display');
-  // });
+  $.getJSON('/api/books', function(data) {
+    //let  items = [];
+    itemsRaw = data;
+    $.each(data, function(i, val) {
+      items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentcount + ' comments</li>');
+      return ( i !== 14 );
+    });
+    if (items.length >= 15) {
+      items.push('<p>...and '+ (data.length - 15)+' more!</p>');
+    }
+    $('<ul/>', {
+      'class': 'listWrapper',
+      html: items.join('')
+      }).appendTo('#display');
+  });
   
   let  comments = [];
   $('#display').on('click','li.bookItem',function() {
@@ -65,7 +65,7 @@ $( document ).ready(function() {
       dataType: 'json',
       data: $('#newBookForm').serialize(),
       success: function(data) {
-        $('#display').html(items.join('')) // update list ? reon
+       
       }
     });
   });
