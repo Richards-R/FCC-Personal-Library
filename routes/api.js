@@ -23,17 +23,16 @@ module.exports = function (app) {
             commentcount: book.comments.length
           }
         })
-        return res.json(formatData)}
+          res.json(formatData)}
       )
       .catch(err=> {
-          return res.json([]),err});
+          res.send(err)});
        })
   
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
       .post(function (req, res){
       let title = req.body.title;
-      //console.log('Anew book title', newBook);
       if (!title){
         return res.json({ error: "missing required field title" });
       }
@@ -41,33 +40,63 @@ module.exports = function (app) {
         title,
         comments: []
       });
-      console.log('Bnew book title', newBook);
+      console.log('new book title', newBook);
       newBook.save();
       return res.json({_id: newBook._id, title: newBook.title});
       //response will contain new book object including atleast _id and title
     })
     
-    .delete(function(req, res){
+    .delete (async function(req, res){
       //if successful response will be 'complete delete successful'
-    });
-
-
+        await Book.deleteMany({})
+        res.send("complete delete successful")
+      });
 
   app.route('/api/books/:id')
     .get(function (req, res){
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-    })
-    
-    .post(function(req, res){
+      Book.findById({bookid})
+      .then(data => {
+        return res.json({
+            _id : data._id,
+            title: data.title,
+            comments: data.comments,
+            commentcount: data.comments.length})
+          })
+      .catch(err=> {
+          res.send(err)});
+       })
+      
+    .post(async function(req, res){
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
+      if (!comment){
+        res.send("please enter a comment");
+        return;
+      }else{
+        await Book.findById({bookid})
+        .then(data => {
+          data.comments.push(comment);
+          data.save(saveData => {
+            res.json({
+              _id : saveDdata._id,
+              title: saveData.title,
+              comments: saveData.comments,
+              commentcount: saveData.comments.length})
+              })
+          })
+        .catch(err=> {
+            res.send(err)});
+      }
     })
     
     .delete(function(req, res){
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
+      Book.findByIdAndRemove(bookid)
+      res.send("delete successful")
     });
-  
+
 };
