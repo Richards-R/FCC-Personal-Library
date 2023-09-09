@@ -77,19 +77,15 @@ module.exports = function (app) {
         return;
       }else{
         await Book.findById({bookid})
-        .then(data => {
-          data.comments.push(comment);
-          data.save(saveData => {
-            res.json({
-              _id : saveDdata._id,
-              title: saveData.title,
-              comments: saveData.comments,
-              commentcount: saveData.comments.length})
-              })
-          })
-        .catch(err=> {
-            res.send(err)});
-      }
+                  .then(data => {
+                    data.comments.push(comment);
+                    data.commentcount = data.comments.length;
+                    data.save();
+                    return res.json(data);
+                    })
+                  .catch(err=> {
+                    return res.send(err)});
+                }
     })
     
     .delete(function(req, res){
