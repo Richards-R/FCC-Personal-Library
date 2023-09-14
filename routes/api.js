@@ -45,14 +45,15 @@ module.exports = function (app) {
       //response will contain new book object including atleast _id and title
     })
     
-    .delete(function(req, res){
+    .delete (async function(req, res){
       //if successful response will be 'complete delete successful'
-    });
-
-
+        await Book.deleteMany({})
+        res.send("complete delete successful")
+      });
 
   app.route('/api/books/:id')
     .get(function (req, res){
+      let bookid = req.params.id;
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
@@ -61,11 +62,28 @@ module.exports = function (app) {
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
+      if (!comment){
+        res.send("please enter a comment");
+        return;
+      }else{
+        await Book.findById({bookid})
+                  .then(data => {
+                    data.comments.push(comment);
+                    data.commentcount = data.comments.length;
+                    data.save();
+                    return res.json(data);
+                    })
+                  .catch(err=> {
+                    return res.send(err)});
+                }
     })
     
     .delete(function(req, res){
       let bookid = req.params.id;
+      let bookid = req.params.id;
       //if successful response will be 'delete successful'
+      Book.findByIdAndRemove(bookid)
+      res.send("delete successful")
     });
-  
+
 };

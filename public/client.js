@@ -1,6 +1,8 @@
 $( document ).ready(function() {
   let  items = [];
   let  itemsRaw = [];
+  let  items = [];
+  let  itemsRaw = [];
   
   $.getJSON('/api/books', function(data) {
     let  items = [];
@@ -18,6 +20,7 @@ $( document ).ready(function() {
       }).appendTo('#display');
   });
   
+  let  comments = [];
   let  comments = [];
   $('#display').on('click','li.bookItem',function() {
     $("#detailTitle").html('<b>'+itemsRaw[this.id].title+'</b> (id: '+itemsRaw[this.id]._id+')');
@@ -45,6 +48,7 @@ $( document ).ready(function() {
   });  
   
   $('#bookDetail').on('click','button.addComment',function() {
+    let  newComment = $('#commentToAdd').val();
     let  newComment = $('#commentToAdd').val();
     $.ajax({
       url: '/api/books/'+this.id,
