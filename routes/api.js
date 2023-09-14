@@ -34,7 +34,7 @@ module.exports = function (app) {
     .post(function (req, res){
       let title = req.body.title;
       if (!title){
-        return res.json({ error: "missing required field title" });
+        return res.json("missing required field title" );
       }
       let newBook = new Book({
         title: title,
@@ -75,7 +75,7 @@ module.exports = function (app) {
       
      Book.findById(bookid)
          .then(data =>{
-          if (!data) return res.send("no book with that id exists");
+          if (!data) return res.send("no book exists");
           return res.json(data);
          })
          .catch(err => {
@@ -88,7 +88,7 @@ module.exports = function (app) {
       let comment = req.body.comment;
       //json res format same as .get
       if (!comment){
-        return res.send("please enter a comment");}
+        return res.send("missing required field comment");}
         
       Book.findById(bookid)
           .then(data => {
@@ -103,15 +103,21 @@ module.exports = function (app) {
               //   commentcount: saveData.comments.length
               // })
           .catch(err=> {
-            return res.send("no book with that id exists")
+            return res.send("no book exists")
           })
         })
     
-    .delete(function(req, res){
-      let bookid = req.params.id;
-      //if successful response will be 'delete successful'
-      Book.findByIdAndRemove(bookid)
-      res.send("delete successful")
-    });
-
+      .delete(function(req, res){
+        let bookid = req.params.id;
+        //if successful response will be 'delete successful'
+        Book
+          .findByIdAndDelete(bookid)
+          .then((book) => {
+            if (!book) return res.send('no book exists');
+            return res.send('delete successful');
+          })
+          .catch(() => {
+            return res.send('no book exists');
+          });
+        });
 };
