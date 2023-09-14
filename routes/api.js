@@ -54,11 +54,10 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(function (req, res){
       let bookid = req.params.id;
-      let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
-    .post(function(req, res){
+    .post(async function(req, res){
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
@@ -79,7 +78,6 @@ module.exports = function (app) {
     })
     
     .delete(function(req, res){
-      let bookid = req.params.id;
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
       Book.findByIdAndRemove(bookid)
