@@ -9,7 +9,7 @@
 'use strict';
 const mongodb = require("mongodb");
 const mongoose = require("mongoose");
-
+const Book = require("../models.js").Book
 
 module.exports = function (app) {
   mongoose.connect(process.env.DB, {
@@ -18,10 +18,18 @@ module.exports = function (app) {
   });
 
  app.route('/api/books')
-    // .get(function (req, res){
-    //   //response will be array of book objects
-    //   //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    // })
+    .get(function (req, res){
+      //response will be array of book objects
+      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      Book.find({})
+          .then(data => {
+            return res.json(data);
+          })
+          .catch(err => {
+            return res.send(err);
+          });
+
+    })
     
     .post(function (req, res){
       let title = req.body.title;
@@ -46,7 +54,16 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(function (req, res){
       let bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+     //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+      
+     Book.findById(bookid)
+         .then(data =>{
+          if (!data) return res.send("no book with that id exists");
+          return res.json(data);
+         })
+         .catch(err => {
+          return res.send("no book exists");
+         })
     })
     
     .post(function(req, res){
