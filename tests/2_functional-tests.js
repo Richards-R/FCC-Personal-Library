@@ -13,6 +13,8 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
+let id;
+
 suite('Functional Tests', function() {
 
   /*
@@ -41,11 +43,30 @@ suite('Functional Tests', function() {
     suite('POST /api/books with title => create book object/expect book object', function() {
       
       test('Test POST /api/books with title', function(done) {
-        //done();
+       // rr from here
+        chai.request(server)
+            .keepOpen()
+            .post('/api/books')
+            .send({title:"test_title"})
+            .end(function (err, res){
+              id = res.body._id;
+              assert.equal(res.status, 200, "status must be 200");
+              assert.equal(res.body.title, 'test_title', "title must be test_title");
+              done();
+        });
+      // rr to here
       });
       
       test('Test POST /api/books with no title given', function(done) {
-        //done();
+        chai.request(server)
+            .keepOpen()
+            .post('/api/books')
+            .send({title:""})
+            .end(function (err, res){
+              assert.equal(res.status, 200, "status must be 200");
+              assert.equal(res.body.title, undefined, "title needed");
+              done();
+        });
       });
       
     });
@@ -54,7 +75,14 @@ suite('Functional Tests', function() {
     suite('GET /api/books => array of books', function(){
       
       test('Test GET /api/books',  function(done){
-        //done();
+        chai.request(server)
+        .keepOpen()
+        .get('/api/books')
+        .end(function(err, res){
+          assert.equal(res.status, 200, "status must be 200");
+          assert.isArray(res.body, 'response should be an array');
+          done();
+        });
       });      
       
     });
@@ -63,11 +91,25 @@ suite('Functional Tests', function() {
     suite('GET /api/books/[id] => book object with [id]', function(){
       
       test('Test GET /api/books/[id] with id not in db',  function(done){
-        //done();
+        chai.request(server)
+        .keepOpen()
+        .get('/api/books/' + 'invalidID')
+        .end(function(err, res){
+          assert.equal(res.status, 200, "status must be 200");
+          assert.equal(res.text, 'no book exists');
+          done();
+        });
       });
       
       test('Test GET /api/books/[id] with valid id in db',  function(done){
-        //done();
+        chai.request(server)
+        .keepOpen()
+        .get('/api/books/' + id )
+        .end(function(err, res){
+          assert.equal(res.status, 200, "status must be 200");
+          assert.property(res.body, '_id');
+          done();
+        });
       });
       
     });
