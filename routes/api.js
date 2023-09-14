@@ -17,14 +17,7 @@ module.exports = function (app) {
     useUnifiedTopology: true,
   });
 
-  let bookSchema = new mongoose.Schema({
-    title: String,
-    commentcount: Number
-  });
-
-  let Book = mongoose.model("Book", bookSchema);
-
-  app.route('/api/books')
+ app.route('/api/books')
     // .get(function (req, res){
     //   //response will be array of book objects
     //   //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
@@ -56,24 +49,24 @@ module.exports = function (app) {
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
-    .post(async function(req, res){
+    .post(function(req, res){
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
       if (!comment){
-        res.send("please enter a comment");
-        return;
-      }else{
-        await Book.findById({bookid})
-                  .then(data => {
-                    data.comments.push(comment);
-                    data.commentcount = data.comments.length;
-                    data.save();
-                    return res.json(data);
-                    })
-                  .catch(err=> {
-                    return res.send(err)});
-                }
+        return res.send("please enter a comment");
+        
+      Book.findById(bookid)
+          .then(data => {
+            data.comments.push(comment);
+            data.commentcount = data.comments.length;
+            data.save();
+            return res.json(data);
+            })
+          .catch(err=> {
+            return res.send("no book with that id exists")
+          });
+        }
     })
     
     .delete(function(req, res){
