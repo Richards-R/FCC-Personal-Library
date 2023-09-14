@@ -3,7 +3,7 @@ $( document ).ready(function() {
   let  itemsRaw = [];
   
   $.getJSON('/api/books', function(data) {
-    let  items = [];
+    //let  items = [];
     itemsRaw = data;
     $.each(data, function(i, val) {
       items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentcount + ' comments</li>');
@@ -65,7 +65,7 @@ $( document ).ready(function() {
       dataType: 'json',
       data: $('#newBookForm').serialize(),
       success: function(data) {
-        $('#display').html(items.join('')) // update list ? reon
+        //update list
       }
     });
   });

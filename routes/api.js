@@ -37,19 +37,36 @@ module.exports = function (app) {
         return res.json({ error: "missing required field title" });
       }
       let newBook = new Book({
-        title: title
+        title: title,
+        comments: [],
+        commentcount: 0
       });
+
       console.log('Bnew book title', newBook);
-      newBook.save();
-      return res.json(newBook);
       //response will contain new book object including atleast _id and title
+
+      newBook.save()
+      .then((bookData) => {
+          return res.json({
+          title: bookData.title,
+          _id: bookData._id
+          })
+        })
+        .catch(err => {
+          return res.send(err);
+        });
     })
     
-    .delete (async function(req, res){
+    .delete (function(req, res){
       //if successful response will be 'complete delete successful'
-        await Book.deleteMany({})
-        res.send("complete delete successful")
-      });
+        Book.deleteMany({})
+        .then(data => {
+          return res.send('complete delete successful');
+        })
+        .catch(err => {
+          return res.send(err);
+        });
+    });
 
   app.route('/api/books/:id')
     .get(function (req, res){
@@ -71,7 +88,7 @@ module.exports = function (app) {
       let comment = req.body.comment;
       //json res format same as .get
       if (!comment){
-        return res.send("please enter a comment");
+        return res.send("please enter a comment");}
         
       Book.findById(bookid)
           .then(data => {
@@ -79,12 +96,16 @@ module.exports = function (app) {
             data.commentcount = data.comments.length;
             data.save();
             return res.json(data);
-            })
+          })
+              //   comments: saveData.comments,
+              //   _id: saveData._id,
+              //   title: saveData.title,
+              //   commentcount: saveData.comments.length
+              // })
           .catch(err=> {
             return res.send("no book with that id exists")
-          });
-        }
-    })
+          })
+        })
     
     .delete(function(req, res){
       let bookid = req.params.id;

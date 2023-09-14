@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 
 let bookSchema = new Schema({
   title: {type: String, required: true},
-  comments: [String]
+  comments: [String],
+  commentcount: Number
 });
 
 const Book = mongoose.model('Book', bookSchema);
